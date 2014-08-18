@@ -1,0 +1,49 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:paddingBottom="@dimen/activity_vertical_margin"
+    android:paddingLeft="@dimen/activity_horizontal_margin"
+    android:paddingRight="@dimen/activity_horizontal_margin"
+    android:paddingTop="@dimen/activity_vertical_margin"
+    android:orientation="vertical" >
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content" >
+
+        <TextView
+            android:id="@+id/aboutHeader"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="3G Timer  "
+            android:textAppearance="?android:attr/textAppearanceLarge"
+            android:textStyle="bold" />
+
+        <TextView
+            android:id="@+id/AboutVersion"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="(v. 1.0)\n"
+            android:textAppearance="?android:attr/textAppearanceSmall" />
+
+    </LinearLayout>
+
+    <TextView
+        android:id="@+id/aboutText"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="Setting up a timer which opens and closes 3G connection in defined minutes or seconds will help you to reduce your battery consumption of your mobile phone."
+        android:textAlignment="center"
+        android:textAppearance="?android:attr/textAppearanceMedium"
+        android:textDirection="firstStrong"
+        android:typeface="monospace" />
+
+    <TextView
+        android:id="@+id/AboutContact"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="\nContact:\nerk.cakar@gmail.com"
+        android:textAppearance="?android:attr/textAppearanceMedium" />
+
+</LinearLayout>
