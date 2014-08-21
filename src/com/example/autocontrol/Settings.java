@@ -9,8 +9,8 @@ public class Settings {
 	SharedPreferences.Editor editor;
 	private int tibase = 1000 * 60 * 5; // 5 minutes.
 	private int cdbase = 1000 * 15; // 15 seconds.
-	public static int timeInterval = 1000 * 60 * 10;
-	public static int connectionDuration = 1000 * 15;
+	public static int timeInterval;
+	public static int connectionDuration;
 	
 	public Settings(Context ctx) {
 		preferences = PreferenceManager.getDefaultSharedPreferences(ctx);
@@ -37,6 +37,15 @@ public class Settings {
 		return preferences.getString(key, "-");
 	}
 	
+	public void setBoolean(String key, boolean value) {
+		editor.putBoolean(key, value);
+		editor.commit();
+	}
+	
+	public Boolean getBoolean(String key) {
+		return preferences.getBoolean(key, false);
+	}
+	
 	public void setTimeInterval(int value) {
 		timeInterval = value * tibase;
 		setInt("TimeInterval", value);
@@ -47,12 +56,11 @@ public class Settings {
 		setInt("ConnectionDuration", value);
 	}
 	
-	public void setBoolean(String key, boolean value) {
-		editor.putBoolean(key, value);
-		editor.commit();
+	public int getTimeIntervalInMinutes() {
+		return tibase / (1000 * 60) ;
 	}
 	
-	public Boolean getBoolean(String key) {
-		return preferences.getBoolean(key, false);
+	public int getConnectionDurationInSeconds() {
+		return cdbase / 1000;
 	}
 }

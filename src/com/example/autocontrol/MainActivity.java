@@ -32,9 +32,11 @@ public class MainActivity extends Activity {
 	private AlarmManager aManager;
 	private ToggleButton tbutton ;
 	private SeekBar timeIntervalSeekBar, connectionDurationSeekBar;
+	private SeekBarListener seekBarListener = new SeekBarListener();
 	private TextView timeIntervalText, connectionDurationText, autoControlText, connectionText, lastClosedText;
 	private Settings settings;
 	private Button saveButton;
+	private MyBroadcastReceiver myBroadcastReceiver = new MyBroadcastReceiver();
 	
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
@@ -62,14 +64,21 @@ public class MainActivity extends Activity {
 		updateConnectionText();
 		updateAutoControlStatus();
 		
-		timeIntervalSeekBar.setOnSeekBarChangeListener(new TimeIntervalSeekBarListener());
-		connectionDurationSeekBar.setOnSeekBarChangeListener(new ConnectionDurationListener());
+		timeIntervalSeekBar.setOnSeekBarChangeListener(seekBarListener);
+		connectionDurationSeekBar.setOnSeekBarChangeListener(seekBarListener);
+		
 		connectionDurationSeekBar.setProgress(settings.getInt("ConnectionDuration"));
 		timeIntervalSeekBar.setProgress(settings.getInt("TimeInterval"));
 		lastClosedText.setText(settings.getString("LastClosed"));
 		saveButton.setEnabled(false);
+
+		registerReceiver(myBroadcastReceiver, new IntentFilter("com.example.autocontrol.OPEN"));
+	}
 	
-		registerReceiver(new MyBroadcastReceiver(), new IntentFilter("com.example.autocontrol.OPEN"));
+	@Override
+	public void onDestroy() {
+		unregisterReceiver(myBroadcastReceiver);
+		super.onDestroy();
 	}
 	
 	@Override
@@ -103,6 +112,7 @@ public class MainActivity extends Activity {
 		{
 			aManager.cancel(startPendingIntent);
 			aManager.cancel(stopPendingIntent);
+			
 			settings.setBoolean("isRunning",false);
 			Log.v(this.getClass().getSimpleName(), "Mode OFF");
 		}
@@ -151,35 +161,35 @@ public class MainActivity extends Activity {
 			Toast.makeText(getApplicationContext(), "3G Closed: " + Settings.timeInterval / (1000 * 60) + " min.", Toast.LENGTH_SHORT).show();
 	}
 	
-	private class TimeIntervalSeekBarListener implements OnSeekBarChangeListener {
-		@Override
-		public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser) {
-			timeIntervalText.setText(String.valueOf(progress * 5) + " min.");
-			saveButton.setEnabled(true);
-		}
-		@Override
-		public void onStartTrackingTouch(SeekBar seekBar) {	}
-		@Override
-		public void onStopTrackingTouch(SeekBar seekBar) { }
-	}
-	
-	private class ConnectionDurationListener implements OnSeekBarChangeListener {
-		@Override
-		public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser) {
-			connectionDurationText.setText(String.valueOf(progress * 15) + " sec.");
-			saveButton.setEnabled(true);	
-		}
-		@Override
-		public void onStartTrackingTouch(SeekBar seekBar) {	}
-		@Override
-		public void onStopTrackingTouch(SeekBar seekBar) { }
-	}
-	
 	private class MyBroadcastReceiver extends BroadcastReceiver {
 		@Override
 		public void onReceive(Context context, Intent intent) {
 			updateConnectionText();
 			updateToast();
 		}
+	}
+	
+	private class SeekBarListener implements OnSeekBarChangeListener {
+		@Override
+		public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser) {
+			switch (seekBar.getId()) {
+			case R.id.timeIntervalSeekBar:
+				timeIntervalText.setText(String.valueOf(progress * settings.getTimeIntervalInMinutes()) + " min.");				
+				break;
+			case R.id.connectionDurationSeekBar:
+				connectionDurationText.setText(String.valueOf(progress * settings.getConnectionDurationInSeconds()) + " sec.");
+				break;
+			default:
+				break;
+			}
+			if(!saveButton.isEnabled())
+				saveButton.setEnabled(true);
+		}
+
+		@Override
+		public void onStartTrackingTouch(SeekBar seekBar) { }
+
+		@Override
+		public void onStopTrackingTouch(SeekBar seekBar) { }
 	}
 }
