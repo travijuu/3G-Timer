@@ -1,31 +1,37 @@
 package com.travijuu.timer;
 
+import java.text.DateFormat;
+import java.util.Date;
+
+import android.annotation.TargetApi;
 import android.app.Notification;
 import android.app.NotificationManager;
 import android.app.PendingIntent;
 import android.content.Context;
 import android.content.Intent;
+import android.os.Build;
 
 
 public class TimerNotification {
 	NotificationManager nManager;
 	Notification notification;
 	
-	public TimerNotification(Context context) {
-		nManager = (NotificationManager) context.getApplicationContext().getSystemService(context.getApplicationContext().NOTIFICATION_SERVICE);
+	@TargetApi(Build.VERSION_CODES.JELLY_BEAN) public TimerNotification(Context context) {
+		nManager = (NotificationManager) context.getApplicationContext().getSystemService(context.NOTIFICATION_SERVICE);
 		Intent intent = new Intent(context.getApplicationContext(), MainActivity.class);
+		PendingIntent pendingNotificationIntent = PendingIntent.getActivity(context.getApplicationContext(),0, intent,PendingIntent.FLAG_ONE_SHOT);
 		
-		notification = new Notification(R.drawable.ic_launcher, "Test Messsage",System.currentTimeMillis());
-
-		intent.addFlags(Intent.FLAG_ACTIVITY_SINGLE_TOP | Intent.FLAG_ACTIVITY_CLEAR_TOP);
-		PendingIntent pendingNotificationIntent = PendingIntent.getActivity( context.getApplicationContext(),0, intent,PendingIntent.FLAG_UPDATE_CURRENT);
-		notification.flags |= Notification.FLAG_AUTO_CANCEL;
-		notification.flags |= Notification.FLAG_SHOW_LIGHTS;
-		notification.flags |= Notification.DEFAULT_VIBRATE;
+		notification = new Notification.Builder(context)
+			.setContentTitle("3G Timer")
+			.setContentText("Closed Notification")
+			.setSmallIcon(R.drawable.ic_launcher)
+			.setContentIntent(pendingNotificationIntent)
+			.setAutoCancel(true)
+			//.addAction(R.drawable.abc_ic_clear_normal, "Stop Timer", pendingNotificationIntent)
+			.setTicker("3G Closed: " + DateFormat.getDateTimeInstance().format(new Date()))
+			.build();
 		
-		notification.setLatestEventInfo(context.getApplicationContext(), "3G Timer", "3G closed at " + System.currentTimeMillis(), pendingNotificationIntent);
-		notification.tickerText = "Deneme";
-		
+		nManager.cancel(0);		
 	}
 	
 	public void post() {

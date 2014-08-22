@@ -15,15 +15,17 @@ public class MobileConnectionReceiver extends BroadcastReceiver {
 		boolean connectionStatus = intent.getExtras().getBoolean("ConnectionStatus");
 		Settings settings = new Settings(context);
 		MobileConnection mConnection = new MobileConnection(context);
-		Intent actionIntent = new Intent("com.travijuu.timer.OPEN");
+		Intent actionIntent = new Intent("com.travijuu.timer.broadcast");
 		Log.i(this.getClass().getSimpleName(), "Broadcast Received: " + connectionStatus);
 		
 		mConnection.toggleConnection(connectionStatus);
 		settings.setBoolean("Is3G", connectionStatus);
 		
-		if (!connectionStatus)
+		if (!connectionStatus) {
 			settings.setString("LastClosed", DateFormat.getDateTimeInstance().format(new Date()));
-		
+			if (settings.getBoolean("NotificationEnabled"))
+				new TimerNotification(context).post();
+		}
 		context.sendBroadcast(actionIntent);
 	}
 }

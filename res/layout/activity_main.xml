@@ -171,4 +171,14 @@
         android:textAppearance="?android:attr/textAppearanceLarge"
         android:textStyle="bold" />
 
+    <CheckBox
+        android:id="@+id/notificationCheckBox"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignBaseline="@+id/saveButton"
+        android:layout_alignBottom="@+id/saveButton"
+        android:layout_alignRight="@+id/connectionDurationSeekBar"
+        android:layout_toRightOf="@+id/saveButton"
+        android:text="Notification Enabled" />
+
 </RelativeLayout>

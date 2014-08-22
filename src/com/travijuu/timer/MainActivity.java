@@ -19,6 +19,10 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
+import android.widget.CheckBox;
+import android.widget.CompoundButton;
+import android.widget.RadioGroup;
+import android.widget.RadioGroup.OnCheckedChangeListener;
 import android.widget.SeekBar;
 import android.widget.Toast;
 import android.widget.SeekBar.OnSeekBarChangeListener;
@@ -36,7 +40,10 @@ public class MainActivity extends Activity {
 	private TextView timeIntervalText, connectionDurationText, autoControlText, connectionText, lastClosedText;
 	private Settings settings;
 	private Button saveButton;
+	private CheckBox notificationCheckBox;
 	private MyBroadcastReceiver myBroadcastReceiver;
+	private CheckBoxListener checkBoxListener;
+	
 	
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
@@ -53,6 +60,7 @@ public class MainActivity extends Activity {
 		lastClosedText = ((TextView) findViewById(R.id.lastClosedText));
 		autoControlText = (TextView) findViewById(R.id.autoControlText);
 		connectionText = (TextView) findViewById(R.id.connectionText);
+		notificationCheckBox = (CheckBox) findViewById(R.id.notificationCheckBox);
 		
 		settings = new Settings(getApplicationContext());
 		startIntent = new Intent(MainActivity.this, MobileConnectionReceiver.class);
@@ -63,19 +71,24 @@ public class MainActivity extends Activity {
 		stopPendingIntent = PendingIntent.getBroadcast(MainActivity.this, 1, stopIntent, 1);
 		myBroadcastReceiver = new MyBroadcastReceiver();
 		seekBarListener = new SeekBarListener();
+		checkBoxListener = new CheckBoxListener();
 		
 		updateConnectionText();
 		updateAutoControlStatus();
 		
 		timeIntervalSeekBar.setOnSeekBarChangeListener(seekBarListener);
 		connectionDurationSeekBar.setOnSeekBarChangeListener(seekBarListener);
+		notificationCheckBox.setOnCheckedChangeListener(checkBoxListener);
 		
 		connectionDurationSeekBar.setProgress(settings.getInt("ConnectionDuration"));
 		timeIntervalSeekBar.setProgress(settings.getInt("TimeInterval"));
+		notificationCheckBox.setChecked(settings.getBoolean("NotificationEnabled"));
+		notificationCheckBox.setOnCheckedChangeListener(checkBoxListener);
+		
 		lastClosedText.setText(settings.getString("LastClosed"));
 		saveButton.setEnabled(false);
 
-		registerReceiver(myBroadcastReceiver, new IntentFilter("com.travijuu.timer.OPEN"));
+		registerReceiver(myBroadcastReceiver, new IntentFilter("com.travijuu.timer.broadcast"));
 	}
 	
 	@Override
@@ -115,7 +128,7 @@ public class MainActivity extends Activity {
 		{
 			aManager.cancel(startPendingIntent);
 			aManager.cancel(stopPendingIntent);
-			
+			//unregisterReceiver(myBroadcastReceiver);
 			settings.setBoolean("isRunning",false);
 			Log.v(this.getClass().getSimpleName(), "Mode OFF");
 		}
@@ -125,6 +138,7 @@ public class MainActivity extends Activity {
 	public void saveSettings(View v) {
 		settings.setTimeInterval(timeIntervalSeekBar.getProgress());
 		settings.setConnectionDuration(connectionDurationSeekBar.getProgress());
+		settings.setBoolean("NotificationEnabled", notificationCheckBox.isChecked());
 		saveButton.setEnabled(false);
 		Log.i(this.getClass().getSimpleName(), "Settings Saved");
 	}
@@ -194,5 +208,16 @@ public class MainActivity extends Activity {
 
 		@Override
 		public void onStopTrackingTouch(SeekBar seekBar) { }
+	}
+	
+	private class CheckBoxListener implements android.widget.CompoundButton.OnCheckedChangeListener {
+
+		@Override
+		public void onCheckedChanged(CompoundButton arg0, boolean arg1) {
+			// TODO Auto-generated method stub
+			saveButton.setEnabled(true);
+		}
+
+	
 	}
 }
