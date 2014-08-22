@@ -42,7 +42,6 @@ public class MainActivity extends Activity {
 	private Button saveButton;
 	private CheckBox notificationCheckBox;
 	private MyBroadcastReceiver myBroadcastReceiver;
-	private CheckBoxListener checkBoxListener;
 	
 	
 	@Override
@@ -71,22 +70,16 @@ public class MainActivity extends Activity {
 		stopPendingIntent = PendingIntent.getBroadcast(MainActivity.this, 1, stopIntent, 1);
 		myBroadcastReceiver = new MyBroadcastReceiver();
 		seekBarListener = new SeekBarListener();
-		checkBoxListener = new CheckBoxListener();
 		
 		updateConnectionText();
 		updateAutoControlStatus();
 		
 		timeIntervalSeekBar.setOnSeekBarChangeListener(seekBarListener);
-		connectionDurationSeekBar.setOnSeekBarChangeListener(seekBarListener);
-		notificationCheckBox.setOnCheckedChangeListener(checkBoxListener);
-		
-		connectionDurationSeekBar.setProgress(settings.getInt("ConnectionDuration"));
 		timeIntervalSeekBar.setProgress(settings.getInt("TimeInterval"));
+		connectionDurationSeekBar.setOnSeekBarChangeListener(seekBarListener);
+		connectionDurationSeekBar.setProgress(settings.getInt("ConnectionDuration"));
 		notificationCheckBox.setChecked(settings.getBoolean("NotificationEnabled"));
-		notificationCheckBox.setOnCheckedChangeListener(checkBoxListener);
-		
-		lastClosedText.setText(settings.getString("LastClosed"));
-		saveButton.setEnabled(false);
+		notificationCheckBox.setOnCheckedChangeListener(new CheckBoxListener());
 
 		registerReceiver(myBroadcastReceiver, new IntentFilter("com.travijuu.timer.broadcast"));
 	}
@@ -128,7 +121,6 @@ public class MainActivity extends Activity {
 		{
 			aManager.cancel(startPendingIntent);
 			aManager.cancel(stopPendingIntent);
-			//unregisterReceiver(myBroadcastReceiver);
 			settings.setBoolean("isRunning",false);
 			Log.v(this.getClass().getSimpleName(), "Mode OFF");
 		}
@@ -152,8 +144,8 @@ public class MainActivity extends Activity {
 		else
 		{
 			connectionText.setText("OFF");
-			connectionText.setTextColor(Color.RED);		
-			lastClosedText.setText(DateFormat.getDateTimeInstance().format(new Date()));
+			connectionText.setTextColor(Color.RED);
+			lastClosedText.setText(settings.getString("LastClosed"));
 		}
 	}
 	
@@ -199,7 +191,7 @@ public class MainActivity extends Activity {
 			default:
 				break;
 			}
-			if(!saveButton.isEnabled())
+			if(!saveButton.isEnabled() && fromUser)
 				saveButton.setEnabled(true);
 		}
 
@@ -211,13 +203,9 @@ public class MainActivity extends Activity {
 	}
 	
 	private class CheckBoxListener implements android.widget.CompoundButton.OnCheckedChangeListener {
-
 		@Override
 		public void onCheckedChanged(CompoundButton arg0, boolean arg1) {
-			// TODO Auto-generated method stub
 			saveButton.setEnabled(true);
 		}
-
-	
 	}
 }
