@@ -1,4 +1,4 @@
-package com.example.autocontrol;
+package com.travijuu.timer;
 
 import android.content.Context;
 import android.content.SharedPreferences;

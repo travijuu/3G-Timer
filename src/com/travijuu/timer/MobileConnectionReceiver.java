@@ -1,4 +1,4 @@
-package com.example.autocontrol;
+package com.travijuu.timer;
 
 import java.text.DateFormat;
 import java.util.Date;
@@ -15,7 +15,7 @@ public class MobileConnectionReceiver extends BroadcastReceiver {
 		boolean connectionStatus = intent.getExtras().getBoolean("ConnectionStatus");
 		Settings settings = new Settings(context);
 		MobileConnection mConnection = new MobileConnection(context);
-		Intent actionIntent = new Intent("com.example.autocontrol.OPEN");
+		Intent actionIntent = new Intent("com.travijuu.timer.OPEN");
 		Log.i(this.getClass().getSimpleName(), "Broadcast Received: " + connectionStatus);
 		
 		mConnection.toggleConnection(connectionStatus);

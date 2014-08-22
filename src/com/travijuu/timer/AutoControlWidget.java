@@ -1,6 +1,6 @@
-package com.example.autocontrol;
+package com.travijuu.timer;
 
-import com.example.autocontrol.R;
+import com.travijuu.timer.R;
 
 import android.appwidget.AppWidgetManager;
 import android.appwidget.AppWidgetProvider;

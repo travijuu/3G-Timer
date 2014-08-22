@@ -1,9 +1,9 @@
-package com.example.autocontrol;
+package com.travijuu.timer;
 
 import java.text.DateFormat;
 import java.util.Date;
 
-import com.example.autocontrol.R;
+import com.travijuu.timer.R;
 
 import android.app.Activity;
 import android.app.AlarmManager;
@@ -32,11 +32,11 @@ public class MainActivity extends Activity {
 	private AlarmManager aManager;
 	private ToggleButton tbutton ;
 	private SeekBar timeIntervalSeekBar, connectionDurationSeekBar;
-	private SeekBarListener seekBarListener = new SeekBarListener();
+	private SeekBarListener seekBarListener;
 	private TextView timeIntervalText, connectionDurationText, autoControlText, connectionText, lastClosedText;
 	private Settings settings;
 	private Button saveButton;
-	private MyBroadcastReceiver myBroadcastReceiver = new MyBroadcastReceiver();
+	private MyBroadcastReceiver myBroadcastReceiver;
 	
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
@@ -53,6 +53,7 @@ public class MainActivity extends Activity {
 		lastClosedText = ((TextView) findViewById(R.id.lastClosedText));
 		autoControlText = (TextView) findViewById(R.id.autoControlText);
 		connectionText = (TextView) findViewById(R.id.connectionText);
+		
 		settings = new Settings(getApplicationContext());
 		startIntent = new Intent(MainActivity.this, MobileConnectionReceiver.class);
 		startIntent.putExtra("ConnectionStatus", true);
@@ -60,7 +61,9 @@ public class MainActivity extends Activity {
 		stopIntent = new Intent(MainActivity.this, MobileConnectionReceiver.class);
 		stopIntent.putExtra("ConnectionStatus", false);
 		stopPendingIntent = PendingIntent.getBroadcast(MainActivity.this, 1, stopIntent, 1);
-
+		myBroadcastReceiver = new MyBroadcastReceiver();
+		seekBarListener = new SeekBarListener();
+		
 		updateConnectionText();
 		updateAutoControlStatus();
 		
@@ -72,7 +75,7 @@ public class MainActivity extends Activity {
 		lastClosedText.setText(settings.getString("LastClosed"));
 		saveButton.setEnabled(false);
 
-		registerReceiver(myBroadcastReceiver, new IntentFilter("com.example.autocontrol.OPEN"));
+		registerReceiver(myBroadcastReceiver, new IntentFilter("com.travijuu.timer.OPEN"));
 	}
 	
 	@Override

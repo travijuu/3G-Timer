@@ -1,4 +1,4 @@
-package com.example.autocontrol;
+package com.travijuu.timer;
 
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
