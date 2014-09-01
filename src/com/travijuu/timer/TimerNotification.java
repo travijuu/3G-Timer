@@ -19,7 +19,7 @@ public class TimerNotification {
 	@TargetApi(Build.VERSION_CODES.JELLY_BEAN) public TimerNotification(Context context) {
 		nManager = (NotificationManager) context.getApplicationContext().getSystemService(context.NOTIFICATION_SERVICE);
 		Intent intent = new Intent(context.getApplicationContext(), MainActivity.class);
-		PendingIntent pendingNotificationIntent = PendingIntent.getActivity(context.getApplicationContext(),0, intent,PendingIntent.FLAG_ONE_SHOT);
+		PendingIntent pendingNotificationIntent = PendingIntent.getActivity(context.getApplicationContext(),0, intent,PendingIntent.FLAG_UPDATE_CURRENT);
 		
 		notification = new Notification.Builder(context)
 			.setContentTitle("3G Timer")
@@ -27,7 +27,6 @@ public class TimerNotification {
 			.setSmallIcon(R.drawable.ic_launcher)
 			.setContentIntent(pendingNotificationIntent)
 			.setAutoCancel(true)
-			//.addAction(R.drawable.abc_ic_clear_normal, "Stop Timer", pendingNotificationIntent)
 			.setTicker("3G Closed: " + DateFormat.getDateTimeInstance().format(new Date()))
 			.build();
 		

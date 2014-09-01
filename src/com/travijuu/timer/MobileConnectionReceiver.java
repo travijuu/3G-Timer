@@ -26,6 +26,7 @@ public class MobileConnectionReceiver extends BroadcastReceiver {
 			if (settings.getBoolean("NotificationEnabled"))
 				new TimerNotification(context).post();
 		}
+		
 		context.sendBroadcast(actionIntent);
 	}
 }

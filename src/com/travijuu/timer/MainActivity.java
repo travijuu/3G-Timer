@@ -1,7 +1,5 @@
 package com.travijuu.timer;
 
-import java.text.DateFormat;
-import java.util.Date;
 
 import com.travijuu.timer.R;
 
@@ -21,8 +19,6 @@ import android.view.View;
 import android.widget.Button;
 import android.widget.CheckBox;
 import android.widget.CompoundButton;
-import android.widget.RadioGroup;
-import android.widget.RadioGroup.OnCheckedChangeListener;
 import android.widget.SeekBar;
 import android.widget.Toast;
 import android.widget.SeekBar.OnSeekBarChangeListener;
@@ -71,8 +67,8 @@ public class MainActivity extends Activity {
 		myBroadcastReceiver = new MyBroadcastReceiver();
 		seekBarListener = new SeekBarListener();
 		
-		updateConnectionText();
-		updateAutoControlStatus();
+		updateMobileConnectionStatus();
+		updateAppStatus();
 		
 		timeIntervalSeekBar.setOnSeekBarChangeListener(seekBarListener);
 		timeIntervalSeekBar.setProgress(settings.getInt("TimeInterval"));
@@ -82,6 +78,7 @@ public class MainActivity extends Activity {
 		notificationCheckBox.setOnCheckedChangeListener(new CheckBoxListener());
 
 		registerReceiver(myBroadcastReceiver, new IntentFilter("com.travijuu.timer.broadcast"));
+		
 	}
 	
 	@Override
@@ -110,7 +107,7 @@ public class MainActivity extends Activity {
 		return super.onOptionsItemSelected(item);
 	}
 		
-	public void toggleAutoControlService(View v) {
+	public void toggleTimerApp(View v) {
 		if(tbutton.isChecked()) {
 			aManager.setRepeating(AlarmManager.RTC_WAKEUP, System.currentTimeMillis(), Settings.timeInterval, startPendingIntent);
 			aManager.setRepeating(AlarmManager.RTC_WAKEUP, System.currentTimeMillis() + Settings.connectionDuration, Settings.timeInterval, stopPendingIntent);
@@ -124,7 +121,7 @@ public class MainActivity extends Activity {
 			settings.setBoolean("isRunning",false);
 			Log.v(this.getClass().getSimpleName(), "Mode OFF");
 		}
-		updateAutoControlStatus();
+		updateAppStatus();
 	}
 	
 	public void saveSettings(View v) {
@@ -135,9 +132,9 @@ public class MainActivity extends Activity {
 		Log.i(this.getClass().getSimpleName(), "Settings Saved");
 	}
 	
-	public void updateConnectionText() {
+	public void updateMobileConnectionStatus() {
 		if (settings.getBoolean("Is3G"))
-		{ 
+		{
 			connectionText.setText("ON");
 			connectionText.setTextColor(Color.GREEN);
 		}
@@ -145,11 +142,11 @@ public class MainActivity extends Activity {
 		{
 			connectionText.setText("OFF");
 			connectionText.setTextColor(Color.RED);
-			lastClosedText.setText(settings.getString("LastClosed"));
 		}
+		lastClosedText.setText(settings.getString("LastClosed"));
 	}
 	
-	public void updateAutoControlStatus() {
+	public void updateAppStatus() {
 		if (settings.getBoolean("isRunning"))
 		{
 			autoControlText.setText("ON");
@@ -173,7 +170,7 @@ public class MainActivity extends Activity {
 	private class MyBroadcastReceiver extends BroadcastReceiver {
 		@Override
 		public void onReceive(Context context, Intent intent) {
-			updateConnectionText();
+			updateMobileConnectionStatus();
 			updateToast();
 		}
 	}
